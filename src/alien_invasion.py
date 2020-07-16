@@ -53,32 +53,38 @@ class AlienInvasion:
                 self._check_keyup_events(event)
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
-                self._check_play_button(mouse_pos)
+                self.start_game_if_player_clicks_play(mouse_pos)
 
-    def _check_play_button(self, mouse_pos):
-        """Start a new game when the player clicks Play."""
+    def start_game_if_player_clicks_play(self, mouse_pos):
         button_clicked = self.play_button.rect.collidepoint(mouse_pos)
         if button_clicked and not self.stats.game_active:
-            # Reset the game settings.
-            self.settings.initialize_dynamic_settings()
+            self.reset_game_statistics()
+            self.reset_game_statistics()
+            self.remove_aliens_and_bullets()
+            self.create_new_fleet()
+            self.hide_mouse_cursor()
 
-            # Reset the game statistics.
-            self.stats.reset_stats()
-            self.stats.game_active = True
-            self.score_board.prep_score()
-            self.score_board.prep_level()
-            self.score_board.prep_ships()
+    def reset_game_settings(self):
+        self.settings.initialize_dynamic_settings()
+        self.reset_game_statistics()
 
-            # Get rid of any remaining aliens and bullets.
-            self.aliens.empty()
-            self.bullets.empty()
+    def remove_aliens_and_bullets(self):
+        self.aliens.empty()
+        self.bullets.empty()
 
-            # Create a new fleet and center the ship.
-            self._create_fleet()
-            self.ship.center_ship()
+    def create_new_fleet(self):
+        self._create_fleet()
+        self.ship.center_ship()
 
-            # Hide the mouse cursor.
-            pygame.mouse.set_visible(False)
+    def hide_mouse_cursor(self):
+        pygame.mouse.set_visible(False)
+
+    def reset_game_statistics(self):
+        self.stats.reset_stats()
+        self.stats.game_active = True
+        self.score_board.prep_score()
+        self.score_board.prep_level()
+        self.score_board.prep_ships()
 
     def _check_keydown_events(self, event):
         """Respond to keypresses."""
