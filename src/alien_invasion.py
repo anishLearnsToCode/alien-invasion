@@ -26,9 +26,7 @@ class AlienInvasion:
         self.ship = Ship(self)
         self.bullets = pygame.sprite.Group()
         self.aliens = pygame.sprite.Group()
-
         self.create_fleet_of_aliens()
-
         self.play_button = Button(self, 'Play')
 
     def run_game(self):
@@ -47,9 +45,9 @@ class AlienInvasion:
             if event.type == pygame.QUIT:
                 sys.exit()
             elif event.type == pygame.KEYDOWN:
-                self._check_keydown_events(event)
+                self.check_keydown_events(event)
             elif event.type == pygame.KEYUP:
-                self._check_keyup_events(event)
+                self.check_keyup_events(event)
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
                 self.start_game_if_player_clicks_play(mouse_pos)
@@ -73,7 +71,7 @@ class AlienInvasion:
 
     def create_new_fleet(self):
         self.create_fleet_of_aliens()
-        self.ship.center_ship()
+        self.ship.align_center()
 
     def reset_game_statistics(self):
         self.stats.reset_stats()
@@ -82,8 +80,7 @@ class AlienInvasion:
         self.score_board.prep_level()
         self.score_board.prep_ships()
 
-    def _check_keydown_events(self, event):
-        """Respond to keypresses."""
+    def check_keydown_events(self, event):
         if event.key == pygame.K_RIGHT:
             self.ship.moving_right = True
         elif event.key == pygame.K_LEFT:
@@ -93,7 +90,7 @@ class AlienInvasion:
         elif event.key == pygame.K_SPACE:
             self.fire_bullet()
 
-    def _check_keyup_events(self, event):
+    def check_keyup_events(self, event):
         """Respond to key releases."""
         if event.key == pygame.K_RIGHT:
             self.ship.moving_right = False
@@ -176,7 +173,7 @@ class AlienInvasion:
 
             # Create a new fleet and center the ship.
             self.create_fleet_of_aliens()
-            self.ship.center_ship()
+            self.ship.align_center()
 
             # Pause.
             sleep(0.5)
@@ -226,7 +223,7 @@ class AlienInvasion:
     def _update_screen(self):
         """Update images on the screen, and flip to the new screen."""
         self.screen.fill(self.settings.bg_color)
-        self.ship.blitme()
+        self.ship.draw()
         for bullet in self.bullets.sprites():
             bullet.draw_bullet()
         self.aliens.draw(self.screen)
@@ -239,7 +236,3 @@ class AlienInvasion:
             self.play_button.draw_button()
 
         pygame.display.flip()
-
-
-if __name__ == '__main__':
-    AlienInvasion().run_game()
