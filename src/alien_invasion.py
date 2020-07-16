@@ -27,7 +27,7 @@ class AlienInvasion:
         self.bullets = pygame.sprite.Group()
         self.aliens = pygame.sprite.Group()
 
-        self._create_fleet()
+        self.create_fleet_of_aliens()
 
         self.play_button = Button(self, 'Play')
 
@@ -72,7 +72,7 @@ class AlienInvasion:
         self.bullets.empty()
 
     def create_new_fleet(self):
-        self._create_fleet()
+        self.create_fleet_of_aliens()
         self.ship.center_ship()
 
     def reset_game_statistics(self):
@@ -91,7 +91,7 @@ class AlienInvasion:
         elif event.key == pygame.K_q:
             sys.exit()
         elif event.key == pygame.K_SPACE:
-            self._fire_bullet()
+            self.fire_bullet()
 
     def _check_keyup_events(self, event):
         """Respond to key releases."""
@@ -100,29 +100,25 @@ class AlienInvasion:
         elif event.key == pygame.K_LEFT:
             self.ship.moving_left = False
 
-    def _fire_bullet(self):
+    def fire_bullet(self):
         """Create a new bullet and add it to the bullets group."""
         if len(self.bullets) < self.settings.bullets_allowed:
             new_bullet = Bullet(self)
             self.bullets.add(new_bullet)
 
     def update_bullet_positions(self):
-        """Update position of bullets and get rid of old bullets."""
-        # Update bullet positions.
         self.bullets.update()
+        self.remove_bullets_that_have_disappeared()
+        self.manage_bullet_alien_collision()
 
-        # Get rid of bullets that have disappeared.
+    def remove_bullets_that_have_disappeared(self):
         for bullet in self.bullets.copy():
             if bullet.rect.bottom <= 0:
                 self.bullets.remove(bullet)
 
-        self._check_bullet_alien_collisions()
-
-    def _check_bullet_alien_collisions(self):
-        """Respond to bullet-alien collisions."""
+    def manage_bullet_alien_collision(self):
         # Remove any bullets and aliens that have collided.
-        collisions = pygame.sprite.groupcollide(
-            self.bullets, self.aliens, True, True)
+        collisions = pygame.sprite.groupcollide(self.bullets, self.aliens, True, True)
 
         if collisions:
             for aliens in collisions.values():
@@ -131,14 +127,17 @@ class AlienInvasion:
             self.score_board.check_high_score()
 
         if not self.aliens:
-            # Destroy existing bullets and create new fleet.
-            self.bullets.empty()
-            self._create_fleet()
-            self.settings.increase_speed()
+            self.increase_level()
 
-            # Increase level.
-            self.stats.level += 1
-            self.score_board.prep_level()
+    def increase_level(self):
+        # Destroy existing bullets and create new fleet.
+        self.bullets.empty()
+        self.create_fleet_of_aliens()
+        self.settings.increase_speed()
+
+        # Increase level.
+        self.stats.level += 1
+        self.score_board.prep_level()
 
     def _update_aliens(self):
         """
@@ -176,7 +175,7 @@ class AlienInvasion:
             self.bullets.empty()
 
             # Create a new fleet and center the ship.
-            self._create_fleet()
+            self.create_fleet_of_aliens()
             self.ship.center_ship()
 
             # Pause.
@@ -185,8 +184,7 @@ class AlienInvasion:
             self.stats.game_active = False
             pygame.mouse.set_visible(True)
 
-    def _create_fleet(self):
-        """Create the fleet of aliens."""
+    def create_fleet_of_aliens(self):
         # Create an alien and find the number of aliens in a row.
         # Spacing between each alien is equal to one alien width.
         alien = Alien(self)
@@ -196,17 +194,15 @@ class AlienInvasion:
 
         # Determine the number of rows of aliens that fit on the screen.
         ship_height = self.ship.rect.height
-        available_space_y = (self.settings.screen_height -
-                             (3 * alien_height) - ship_height)
+        available_space_y = (self.settings.screen_height - (3 * alien_height) - ship_height)
         number_rows = available_space_y // (2 * alien_height)
 
         # Create the full fleet of aliens.
         for row_number in range(number_rows):
             for alien_number in range(number_aliens_x):
-                self._create_alien(alien_number, row_number)
+                self.place_alien_in_row(alien_number, row_number)
 
-    def _create_alien(self, alien_number, row_number):
-        """Create an alien and place it in the row."""
+    def place_alien_in_row(self, alien_number, row_number):
         alien = Alien(self)
         alien_width, alien_height = alien.rect.size
         alien.x = alien_width + 2 * alien_width * alien_number
