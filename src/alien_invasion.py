@@ -10,6 +10,7 @@ from src.button import Button
 from src.ship import Ship
 from src.bullet import Bullet
 from src.alien import Alien
+from src.utils import hide_mouse_cursor
 
 
 class AlienInvasion:
@@ -18,8 +19,6 @@ class AlienInvasion:
         self.settings = Settings()
 
         self.screen = pygame.display.set_mode((1200, 800))
-        self.settings.screen_width = self.screen.get_rect().width
-        self.settings.screen_height = self.screen.get_rect().height
         pygame.display.set_caption('Alien Invasion')
 
         self.stats = GameStats(self)
@@ -62,7 +61,7 @@ class AlienInvasion:
             self.reset_game_statistics()
             self.remove_aliens_and_bullets()
             self.create_new_fleet()
-            self.hide_mouse_cursor()
+            hide_mouse_cursor()
 
     def reset_game_settings(self):
         self.settings.initialize_dynamic_settings()
@@ -75,9 +74,6 @@ class AlienInvasion:
     def create_new_fleet(self):
         self._create_fleet()
         self.ship.center_ship()
-
-    def hide_mouse_cursor(self):
-        pygame.mouse.set_visible(False)
 
     def reset_game_statistics(self):
         self.stats.reset_stats()
