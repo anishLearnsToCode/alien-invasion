@@ -9,15 +9,15 @@ This game has been built as part of the
 For more python books [see here](https://github.com/anishLearnsToCode/books/tree/master/python).
 
 ## Running the game
-Clone this project into your machine
+Clone this project into your machine and install __pygame__ module globally.
 ```bash
 git clone https://github.com/anishLearnsToCode/alien-invasion
+pip install pygame
 ``` 
 
 enter project and run the driver file
 ```bash
 cd alien-invasion
-cd src
 python driver.py 
 ```
 

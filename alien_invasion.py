@@ -3,14 +3,14 @@ from time import sleep
 
 import pygame
 
-from src.settings import Settings
-from src.game_stats import GameStats
-from src.scoreboard import Scoreboard
-from src.button import Button
-from src.ship import Ship
-from src.bullet import Bullet
-from src.alien import Alien
-from src.utils import hide_mouse_cursor
+from settings import Settings
+from game_stats import GameStats
+from scoreboard import Scoreboard
+from button import Button
+from ship import Ship
+from bullet import Bullet
+from alien import Alien
+from utils import hide_mouse_cursor
 
 
 class AlienInvasion:
